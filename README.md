@@ -1,6 +1,6 @@
-# web-client
+# moneydodo.web.nuxt
 
-> web client of MoneyDodo
+> moneydodo web客户端
 
 ## Build Setup
 

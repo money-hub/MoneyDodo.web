@@ -1,9 +1,12 @@
 const pkg = require('./package')
 
-
 module.exports = {
   mode: 'spa',
 
+  server: {
+    host: '0.0.0.0',
+    post: 3000
+  },
   /*
   ** Headers of the page
   */
@@ -37,7 +40,7 @@ module.exports = {
   */
   plugins: [
     '@/plugins/element-ui',
-    { src: '@/plugins/axios', mode: 'client' }
+    { src: '@/plugins/store', mode: 'client' }
   ],
 
   router: {
@@ -47,9 +50,32 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
-    '@nuxtjs/axios'
+    // Doc: https://axios.nuxtjs.org/usage
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
+  /*
+  ** Axios module configuration
+  */
+  axios: {
+    // See https://github.com/nuxt-community/axios-module#options
+    proxy: true,
+    prefix: '/api',
+    // baseURL: 'http://172.18.32.128:9090/api',
+    credentials: true
+  },
 
+  proxy: [
+    ['/api/auth', {
+      target: 'http://172.18.32.216:8081'
+    }],
+    ['/api/certs', {
+      target: 'http://172.18.32.6:8081'
+    }],
+    ['/api', {
+      target: 'http://172.18.32.128:8081'
+    }]
+  ],
   /*
   ** Build configuration
   */
@@ -60,6 +86,15 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend(config, ctx) {
+      // Run ESLint on save
+      if (ctx.isDev && ctx.isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/
+        })
+      }
     }
   }
 }

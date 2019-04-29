@@ -2,42 +2,51 @@
   <el-container class="match-parent">
     <el-aside class="match-parent" width="auto">
       <el-menu
-        default-active="2"
+        :default-active="!this.$route.path.split('?')[1] ? this.$route.path.split('?')[0] : this.$route.path.split('?')[1]"
         class="el-menu-vertical-demo match-parent"
-        @open="handleOpen"
-        @close="handleClose"
         :collapse="isCollapse"
         :collapse-transition="false"
+        router
+        @open="handleOpen"
+        @close="handleClose"
       >
-        <div class="logo header title">{{ isCollapse ? '' : 'MoneyDodo 管理员系统' }}</div>
-        <el-submenu index="1">
+        <div class="logo header title">
+          {{ isCollapse ? '' : 'MoneyDodo 管理员系统' }}
+        </div>
+        <el-submenu index="/ums">
           <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>导航一</span>
+            <i class="el-icon-location" />
+            <span>用户管理系统</span>
           </template>
           <el-menu-item-group>
-            <template slot="title">分组一</template>
-            <el-menu-item index="1-1">选项1</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
+            <el-menu-item index="/ums/view">
+              查看
+            </el-menu-item>
+            <el-menu-item index="/ums/check">
+              审核
+            </el-menu-item>
           </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="1-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="1-4-1">选项1</el-menu-item>
-          </el-submenu>
         </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-menu"></i>
-          <span slot="title">导航二</span>
-        </el-menu-item>
+        <el-submenu index="/tms">
+          <template slot="title">
+            <i class="el-icon-location" />
+            <span>交易管理系统</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/tms/view" disabled>
+              查看
+            </el-menu-item>
+            <el-menu-item index="/tms/check" disabled>
+              审核
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
         <el-menu-item index="3" disabled>
-          <i class="el-icon-document"></i>
-          <span slot="title">导航三</span>
+          <i class="el-icon-document" />
+          <span slot="title">任务系统</span>
         </el-menu-item>
         <el-menu-item index="4">
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-setting" />
           <span slot="title">导航四</span>
         </el-menu-item>
       </el-menu>
@@ -46,25 +55,31 @@
       <el-header>
         <el-col :span="24" class="header">
           <el-col :span="12">
-            <i class="el-icon-menu tools" @click.prevent="collapse"></i>
+            <i class="el-icon-menu tools" @click.prevent="collapse" />
           </el-col>
           <el-col :span="12" class="userinfo">
             <el-dropdown trigger="hover">
               <span class="el-dropdown-link userinfo-inner">
-                <img :src="this.sysUserAvatar">
-                {{this.$root.user}}
+                <img :src="sysUserAvatar">
+                {{ this.$root.user }}
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>我的消息</el-dropdown-item>
-                <el-dropdown-item>设置</el-dropdown-item>
-                <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item>
+                  我的消息
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  设置
+                </el-dropdown-item>
+                <el-dropdown-item divided @click.native="logout">
+                  退出登录
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </el-col>
         </el-col>
       </el-header>
       <el-main>
-        <nuxt/>
+        <nuxt />
       </el-main>
     </el-container>
   </el-container>
@@ -80,83 +95,67 @@ export default {
         right: 8
       },
       isCollapse: false,
-      sysUserName: "",
-      sysUserAvatar: "user.png",
+      sysUserName: '',
+      sysUserAvatar: '/user.png',
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
         delivery: false,
         type: [],
-        resource: "",
-        desc: ""
+        resource: '',
+        desc: ''
       }
-    };
-  },
-  methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleselect(a, b) {},
-    //退出登录
-    logout() {
-      this.$confirm("确认退出吗?", "提示", {
-        //type: 'warning'
-      })
-        .then(() => {
-          sessionStorage.removeItem("user");
-          this.$root.user = undefined;
-          this.$router.replace("/");
-        })
-        .catch(() => {});
-    },
-    //折叠导航栏
-    collapse() {
-      this.isCollapse = !this.isCollapse;
-    },
-    showMenu(i, status) {
-      this.$refs.menuCollapsed.getElementsByClassName(
-        "submenu-hook-" + i
-      )[0].style.display = status ? "block" : "none";
     }
   },
   mounted() {
-    var user = sessionStorage.getItem("user");
-    if (user) {
-      user = JSON.parse(user);
-      this.sysUserName = user.name || "";
-      this.sysUserAvatar = user.avatar || "";
+    // console.log(this.$route.path.split('?'))
+    // let user = sessionStorage.getItem('user')
+    // if (user) {
+    //   user = JSON.parse(user)
+    //   this.sysUserName = user.name || ''
+    //   this.sysUserAvatar = user.avatar || ''
+    // }
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      // console.log(key, keyPath)
+    },
+    handleClose(key, keyPath) {
+      // console.log(key, keyPath)
+    },
+    handleselect(a, b) {},
+    // 退出登录
+    logout() {
+      this.$confirm('确认退出吗?', '提示', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+        .then(() => {
+          // this.$axios.get('/auth/logout').then((res) => {
+          // if (res.state) {
+          this.$store.commit('removeToken')
+          this.$router.replace('/')
+          // }
+          // })
+        })
+        .catch(() => {})
+    },
+    // 折叠导航栏
+    collapse() {
+      this.isCollapse = !this.isCollapse
+    },
+    showMenu(i, status) {
+      this.$refs.menuCollapsed.getElementsByClassName(
+        'submenu-hook-' + i
+      )[0].style.display = status ? 'block' : 'none'
     }
   }
-};
+}
 </script>
 
-<style>
-html {
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
-.match-parent {
-  height: 100%;
-}
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
-}
-</style>
 <style scoped>
 .header {
   height: 60px;
@@ -214,10 +213,6 @@ html {
   line-height: 60px;
 }
 
-.el-main {
-  margin: auto;
-  text-align: center;
-}
 .el-dropdown {
   vertical-align: bottom;
 }
