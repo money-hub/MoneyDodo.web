@@ -1,17 +1,30 @@
 <template>
-  <el-form ref="loginForm" :model="loginForm" :rules="rules" status-icon class="login-container">
+  <el-form
+    ref="loginForm"
+    :model="loginForm"
+    :rules="rules"
+    status-icon
+    class="login-container"
+  >
     <h3 class="title">
       MoneyDodo 管理员登录系统
     </h3>
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号" />
+    <el-form-item prop="name">
+      <el-input
+        v-model="loginForm.name"
+        type="text"
+        auto-complete="off"
+        placeholder="账号"
+      />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model="loginForm.password" type="password" auto-complete="off" placeholder="密码" />
+      <el-input
+        v-model="loginForm.password"
+        type="password"
+        auto-complete="off"
+        placeholder="密码"
+      />
     </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">
-      记住密码
-    </el-checkbox>
     <el-form-item style="width:100%;">
       <el-button
         type="primary"
@@ -38,13 +51,12 @@ export default {
     }
     return {
       loading: false,
-      checked: true,
       loginForm: {
-        username: null,
+        name: null,
         password: null
       },
       rules: {
-        username: [
+        name: [
           {
             validator: isValidate,
             trigger: 'blur',
@@ -68,12 +80,12 @@ export default {
       this.loading = true
       this.$refs.loginForm.validate((valid, object) => {
         if (valid) {
-          this.$root.user = this.loginForm.username
           this.$axios.post('/auth/admin', this.loginForm)
             .then((res) => {
               res = res.data
               if (res.status) {
                 this.$store.commit('setToken', res.data)
+                this.$store.commit('setUser', this.loginForm.name)
                 this.$message({
                   type: 'sucess',
                   message: '登陆成功'

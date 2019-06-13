@@ -40,7 +40,8 @@ module.exports = {
   */
   plugins: [
     '@/plugins/element-ui',
-    { src: '@/plugins/store', mode: 'client' }
+    { src: '@/plugins/store', mode: 'client' },
+    { src: '@/plugins/axios', mode: 'client' }
   ],
 
   router: {
@@ -66,14 +67,14 @@ module.exports = {
   },
 
   proxy: [
-    ['/api/auth', {
-      target: 'http://172.18.32.216:8081'
-    }],
-    ['/api/certs', {
-      target: 'http://172.18.32.6:8081'
-    }],
+    // ['/api/auth', {
+    //   target: 'http://172.18.32.216:8123'
+    // }],
+    // ['/api/certs', {
+    //   target: 'http://172.18.32.128:8123'
+    // }],
     ['/api', {
-      target: 'http://172.18.32.128:8081'
+      target: 'http://111.230.10.230:8998'
     }]
   ],
   /*
@@ -81,7 +82,13 @@ module.exports = {
   */
   build: {
     transpile: [/^element-ui/],
-
+    loaders: {
+      vue: {
+        compilerOptions: {
+          preserveWhitespace: false
+        }
+      }
+    },
     /*
     ** You can extend webpack config here
     */

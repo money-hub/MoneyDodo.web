@@ -1,12 +1,26 @@
 <template>
   <div>
-    <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-      <el-form :inline="true" :model="filters" disabled="disabled">
+    <el-col
+      :span="24"
+      class="toolbar"
+      style="padding-bottom: 0px;"
+    >
+      <el-form
+        :inline="true"
+        :model="filters"
+        disabled="disabled"
+      >
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="id" />
+          <el-input
+            v-model="filters.name"
+            placeholder="id"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getUsers">
+          <el-button
+            type="primary"
+            @click="getUsers"
+          >
             查询
           </el-button>
         </el-form-item>
@@ -23,29 +37,85 @@
       @selection-change="handleSelectionChange"
     >
       <!-- <el-table-column type="selection" /> -->
-      <el-table-column prop="id" label="id" align="center" />
-      <el-table-column label="头像">
+      <el-table-column
+        prop="id"
+        label="id"
+        align="center"
+      />
+      <el-table-column
+        label="头像"
+        align="center"
+      >
         <template slot-scope="scope">
-          <img :src="scope.row.icon"></img>
+          <el-image
+            lazy
+            fit="scale-down"
+            :src="scope.row.icon || ''"
+          />
         </template>
       </el-table-column>
-      <el-table-column label="认证信息">
+      <el-table-column
+        label="认证信息"
+        align="center"
+      >
         <template slot-scope="scope">
-          <img :src="scope.row.certifiedPic"></img>
+          <el-image
+            lazy
+            fit="scale-down"
+            :src="scope.row.certifiedPic || ''"
+          />
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="用户名" />
-      <el-table-column prop="introduction" label="个人简介" show-overflow-tooltip />
-      <el-table-column prop="email" label="邮箱" />
-      <el-table-column prop="balance" label="余额" />
-      <el-table-column prop="phone" label="电话" />
-      <el-table-column prop="creditScore" label="信用分" />
-      <el-table-column label="操作" min-width="130px">
+      <el-table-column
+        prop="name"
+        label="用户名"
+        align="center"
+      />
+      <el-table-column
+        prop="introduction"
+        label="个人简介"
+        show-overflow-tooltip
+        align="center"
+      />
+      <el-table-column
+        prop="email"
+        label="邮箱"
+        align="center"
+      />
+      <el-table-column
+        prop="balance"
+        label="余额"
+        align="center"
+      />
+      <el-table-column
+        prop="phone"
+        label="电话"
+        align="center"
+      />
+      <el-table-column
+        prop="creditScore"
+        label="信用分"
+        align="center"
+      />
+      <el-table-column
+        label="操作"
+        fixed="right"
+        align="center"
+        min-width="150px"
+      >
         <template slot-scope="scope">
-          <el-button size="small" type="success" @click="check(scope, true)">
+          <el-button
+            size="small"
+            type="success"
+            @click="check(scope, true)"
+          >
             通过
           </el-button>
-          <el-button size="small" type="danger" @click="check(scope, false)">
+          <el-button
+            size="small"
+            type="danger"
+            @click="check(scope, false)"
+          >
             拒绝
           </el-button>
         </template>

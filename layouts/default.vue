@@ -1,8 +1,11 @@
 <template>
   <el-container class="match-parent">
-    <el-aside class="match-parent" width="auto">
+    <el-aside
+      class="match-parent"
+      width="auto"
+    >
       <el-menu
-        :default-active="!this.$route.path.split('?')[1] ? this.$route.path.split('?')[0] : this.$route.path.split('?')[1]"
+        :default-active="this.$route.path.split('?')[1] || this.$route.path.split('?')[0]"
         class="el-menu-vertical-demo match-parent"
         :collapse="isCollapse"
         :collapse-transition="false"
@@ -10,7 +13,8 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <div class="logo header title">
+        <div class="logo header title" @click="this.$router.replace('/home')">
+          <i class="el-icon-s-home" />
           {{ isCollapse ? '' : 'MoneyDodo 管理员系统' }}
         </div>
         <el-submenu index="/ums">
@@ -27,25 +31,38 @@
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-submenu index="/tms">
+        <el-submenu
+          index="/tms"
+        >
           <template slot="title">
             <i class="el-icon-location" />
             <span>交易管理系统</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/tms/view" disabled>
+            <el-menu-item
+              index="/tms/view"
+            >
               查看
             </el-menu-item>
-            <el-menu-item index="/tms/check" disabled>
+            <el-menu-item
+              index="/tms/check"
+              disabled
+            >
               审核
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-menu-item index="3" disabled>
+        <el-menu-item
+          index="3"
+          disabled
+        >
           <i class="el-icon-document" />
           <span slot="title">任务系统</span>
         </el-menu-item>
-        <el-menu-item index="4">
+        <el-menu-item
+          index="4"
+          disabled
+        >
           <i class="el-icon-setting" />
           <span slot="title">导航四</span>
         </el-menu-item>
@@ -53,15 +70,24 @@
     </el-aside>
     <el-container>
       <el-header>
-        <el-col :span="24" class="header">
+        <el-col
+          :span="24"
+          class="header"
+        >
           <el-col :span="12">
-            <i class="el-icon-menu tools" @click.prevent="collapse" />
+            <i
+              class="el-icon-menu tools"
+              @click.prevent="collapse"
+            />
           </el-col>
-          <el-col :span="12" class="userinfo">
+          <el-col
+            :span="12"
+            class="userinfo"
+          >
             <el-dropdown trigger="hover">
               <span class="el-dropdown-link userinfo-inner">
                 <img :src="sysUserAvatar">
-                {{ this.$root.user }}
+                {{ sysUserName }}
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
@@ -70,7 +96,10 @@
                 <el-dropdown-item>
                   设置
                 </el-dropdown-item>
-                <el-dropdown-item divided @click.native="logout">
+                <el-dropdown-item
+                  divided
+                  @click.native="logout"
+                >
                   退出登录
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -110,13 +139,7 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.$route.path.split('?'))
-    // let user = sessionStorage.getItem('user')
-    // if (user) {
-    //   user = JSON.parse(user)
-    //   this.sysUserName = user.name || ''
-    //   this.sysUserAvatar = user.avatar || ''
-    // }
+    this.sysUserName = sessionStorage.getItem('username') || ''
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -125,7 +148,7 @@ export default {
     handleClose(key, keyPath) {
       // console.log(key, keyPath)
     },
-    handleselect(a, b) {},
+    handleselect(a, b) { },
     // 退出登录
     logout() {
       this.$confirm('确认退出吗?', '提示', {
@@ -141,7 +164,7 @@ export default {
           // }
           // })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     // 折叠导航栏
     collapse() {
