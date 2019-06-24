@@ -12,185 +12,261 @@
         <el-form-item>
           <el-input
             v-model="filters.name"
-            placeholder="id 或 用户名"
+            placeholder="id"
           />
         </el-form-item>
         <el-form-item>
           <el-button
             type="primary"
             :loading="quering"
-            @click="getUsers"
+            @click="getUserTasks"
           >
             查询
           </el-button>
         </el-form-item>
       </el-form>
     </el-col>
+    <el-radio-group
+      v-model="radio"
+      @change="radioChanged"
+    >
+      <el-radio :label="null">
+        全部
+      </el-radio>
+      <el-radio :label="'non-released'">
+        未发布的
+      </el-radio>
+      <el-radio :label="'released'">
+        已发布的
+      </el-radio>
+      <el-radio :label="'closed'">
+        已关闭的
+      </el-radio>
+    </el-radio-group>
     <el-table
       ref="multipleTable"
+      v-loading.body.lock="tableLoading"
       tooltip-effect="dark"
       style="width: 100%"
       stripe
       lazy
       :data="tableData"
-      :row-class-name="tableRowClassName"
-      @row-click="tableRowClick"
-      @selection-change="handleSelectionChange"
+      @expand-change="getTaskComment"
     >
-      <!-- <el-table-column type="selection" /> -->
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <div
+            v-for="i in scope.row.comments"
+            :key="i.id"
+            :loading="i.loadComment"
+          >
+            <span>{{ i.userId }}</span>
+            <span>{{ i.timestamp }}</span>
+            <span>{{ i.stars }}</span>
+            <div>{{ i.content }}</div>
+            <el-button
+              type="danger"
+              @click="deleteComment(i)"
+            >
+              删除
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="id"
         label="id"
         align="center"
       />
       <el-table-column
-        label="头像"
+        prop="kind"
+        label="种类"
+        align="center"
+      />
+      <el-table-column
+        label="状态"
         align="center"
       >
         <template slot-scope="scope">
-          <el-image
-            lazy
-            fit="scale-down"
-            :src="scope.row.icon ? 'data:image/png;base64,' + scope.row.icon : ''"
-          />
+          <el-tag
+            :type="buttonColorTable[scope.row.state]"
+            disable-transitions
+          >
+            {{ scope.row.state }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        label="认证信息"
+        label="发布时间"
         align="center"
       >
         <template slot-scope="scope">
-          <el-image
-            lazy
-            fit="scale-down"
-            :src="scope.row.certifiedPic ? 'data:image/png;base64,' + scope.row.certifiedPic : ''"
-          />
+          <span>
+            {{ formatDate(scope.row.pubdate, 'yyyy-MM-dd hh:mm:ss') }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="name"
-        label="用户名"
+        prop="restrain"
+        label="限制"
         align="center"
       />
       <el-table-column
-        prop="introduction"
-        label="个人简介"
-        show-overflow-tooltip
+        prop="reward"
+        label="reward"
         align="center"
       />
       <el-table-column
-        prop="email"
-        label="邮箱"
+        prop="publisher"
+        label="发布者 "
         align="center"
       />
+      <!-- <el-table-column
+        prop="cutoff"
+        label="截止时间"
+        align="center"
+      /> -->
       <el-table-column
-        prop="balance"
-        label="余额"
+        label="截止时间"
         align="center"
-      />
-      <el-table-column
-        prop="phone"
-        label="电话"
-        align="center"
-      />
-      <el-table-column
-        prop="creditScore"
-        label="信用分"
-        align="center"
-      />
-      <!-- <el-table-column label="操作" fixed="right" align="center" min-width="150px">
+      >
         <template slot-scope="scope">
-          <el-button size="small" type="success" @click="check(scope.row.id, true)">
-            通过
-          </el-button>
-          <el-button size="small" type="danger" @click="check(scope.row.id, false)">
-            拒绝
+          <span>
+            {{ formatDate(scope.row.cutoff, 'yyyy-MM-dd hh:mm:ss') }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="查看"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-button
+            type="success"
+            @click="view(scope.row)"
+          >
+            查看
           </el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
-    <!-- <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible">
-      <el-upload
-        ref="upload"
-        action="alert"
-        class="avatar-uploader"
-        :file-list="fileList"
-        :limit="1"
-        :auto-upload="false"
-        :show-file-list="false"
-        :before-upload="beforeAvatarUpload"
-        :on-change="handleAvatarChange"
-        :on-exceed="replaceFile"
-        :http-request="uploadIcon"
-      >
-        <img v-if="avatar" :src="avatar" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon" />
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="uploadDisabled" @click="confirm">
-          确 定
-        </el-button>
-        <el-button @click="dialogFormVisible = false">
-          取 消
-        </el-button>
-      </div>
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
 export default {
+  watchQuery: true,
   data() {
     return {
       quering: false,
-      multipleSelection: [],
       fileList: [],
-      // dialogFormTitle: '',
-      // dialogFormVisible: false,
-      // avatar: '',
-      // infoForm: null,
-      // uploadDisabled: true
       filters: {
         name: ''
+      },
+      radio: null,
+      tableLoading: false,
+      buttonColorTable: {
+        'non-released': 'info',
+        'released': 'success',
+        'closed': 'danger'
       }
     }
   },
-  asyncData({ $axios, params }) {
-    return $axios.get('/deals').then((res) => {
-      return { tableData: res.data.data }
+  asyncData({ $axios, params, route }) {
+    const prefix = route.query.userId ? '/users/' + route.query.userId : ''
+    return $axios.get(prefix + '/tasks?limit=100').then((res) => {
+      return {
+        tableData: res.data.data,
+        prefix: prefix
+      }
     })
   },
   methods: {
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.multipleTable.toggleRowSelection(row)
+    deleteComment(comment) {
+      this.$axios.delete('/tasks/' + comment.tasksId + '/comments/' + comment.id).then((res) => {
+        if (res.data.status) {
+          this.tableData.comments.splice(this.tableData.comments.indexOf(comment), 1)
+          this.$message({
+            type: 'sucess',
+            message: '删除成功'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '删除失败'
+          })
+        }
+      })
+    },
+    formatDate(str, fmt) {
+      const d = new Date(str)
+      const o = {
+        'M+': d.getMonth() + 1,
+        'd+': d.getDate(),
+        'h+': d.getHours(),
+        'm+': d.getMinutes(),
+        's+': d.getSeconds(),
+        'q+': Math.floor((d.getMonth() + 3) / 3),
+        'S': d.getMilliseconds()
+      }
+      if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (d.getFullYear() + '').substr(4 - RegExp.$1.length))
+      }
+      for (const k in o) {
+        if (new RegExp('(' + k + ')').test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+        }
+      }
+      return fmt
+    },
+    getTaskComment(row, expandedRows) {
+      if (!row.expend) {
+        row.expend = true
+        row.loadComment = true
+        this.$axios.get('/tasks/' + row.id + '/comments').then((res) => {
+          console.log(res.data)
+          if (res.data.status) {
+            row.comments = res.data.data
+          } else {
+            row.comments = []
+          }
+          row.loadComment = false
+        }).catch((err) => {
+          row.loadComment = false
+          if (err) {
+            console.log(err)
+          }
+          row.comments = []
         })
       } else {
-        this.$refs.multipleTable.clearSelection()
+        row.expend = false
       }
     },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
+    radioChanged(newLabel) {
+      this.tableLoading = true
+      this.$axios.get(this.prefix + '/tasks' + (newLabel ? '?state=' + newLabel : '')).then((res) => {
+        this.tableData = res.data.data
+        this.tableLoading = false
+      })
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.certifiedPic == null) {
-        return 'warning-row'
-      } else if (row.certifiedPic != null) {
-        return 'success-row'
-      }
-      return ''
+    log(userId) {
+      console.log(userId)
     },
-    getUsers() {
+    getUserTasks() {
       this.quering = true
-      this.$axios.get('/users' + (!this.filters.name ? '' : ('/' + this.filters.name)))
+      const name = !this.filters.name ? '' : ('/' + this.filters.name)
+      this.$axios.get(this.prefix + '/tasks' + name)
         .then((res) => {
           this.quering = false
-          const data = res.data.data
-          if (data instanceof Array) {
-            this.tableData = res.data.data
+          if (res.data.status) {
+            const data = res.data.data
+            if (data instanceof Array) {
+              this.tableData = res.data.data
+            } else {
+              this.tableData = [data]
+            }
           } else {
-            this.tableData = [data]
+            this.tableData = []
           }
         })
         .catch((err) => {
@@ -201,53 +277,15 @@ export default {
           this.tableData = []
         })
     },
-    // beforeAvatarUpload(file) {
-    //   const isLt2M = file.size / 1024 / 1024 < 2
-
-    //   if (!isLt2M) {
-    //     this.$message.error('图片大小不能超过 2MB!')
-    //   }
-    //   return isLt2M
-    // },
-    // confirm() {
-    //   this.$refs.upload.submit()
-    // },
-    // uploadIcon(param) {
-    //   this.uploadDisabled = true
-    //   const postData = Object.assign({}, this.infoForm, { certifiedPic: this.avatar })
-    //   this.$axios.put('/users/' + postData.id, postData)
-    //     .then((res) => {
-    //       if (res.data.status) {
-    //         this.infoForm.certifiedPic = this.avatar
-    //         this.dialogFormVisible = false
-    //         this.avatar = null
-    //       } else {
-    //         this.$message.error(res.data.errinfo)
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       this.$message.error(err.message)
-    //       this.avatar = null
-    //     })
-    // },
-    // handleAvatarChange(file, fileList) {
-    //   this.uploadDisabled = true
-    //   const reader = new FileReader()
-    //   const that = this
-    //   reader.readAsDataURL(file.raw)
-    //   reader.onload = function (e) {
-    //     that.avatar = reader.result
-    //     that.uploadDisabled = false
-    //   }
-    // },
-    // replaceFile(files, fileList) {
-    //   this.fileList[0] = files[0]
-    //   this.handleAvatarChange({ raw: files[0] }, this.fileList)
-    // },
-    tableRowClick(row, col) {
-      this.infoForm = row
-      this.dialogFormTitle = row.name
-      this.dialogFormVisible = true
+    view(row) {
+      if (row.kind === 'questionnaire') {
+        this.$router.push('/tms/details?taskId=' + row.id)
+      } else {
+        this.$message({
+          type: 'error',
+          message: '暂时仅支持查看问卷'
+        })
+      }
     }
   }
 }

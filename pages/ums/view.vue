@@ -51,7 +51,7 @@
           <el-image
             lazy
             fit="scale-down"
-            :src="scope.row.icon ? 'data:image/png;base64,' + scope.row.icon : ''"
+            :src="scope.row.icon"
           />
         </template>
       </el-table-column>
@@ -63,7 +63,7 @@
           <el-image
             lazy
             fit="scale-down"
-            :src="scope.row.certifiedPic ? 'data:image/png;base64,' + scope.row.certifiedPic : ''"
+            :src="scope.row.certifiedPic"
           />
         </template>
       </el-table-column>
@@ -157,7 +157,6 @@ export default {
   },
   asyncData({ $axios, params }) {
     return $axios.get('/users').then((res) => {
-      console.log(res.data.data)
       return { tableData: res.data.data }
     })
   },
@@ -187,11 +186,15 @@ export default {
       this.$axios.get('/users' + (!this.filters.name ? '' : ('/' + this.filters.name)))
         .then((res) => {
           this.quering = false
-          const data = res.data.data
-          if (data instanceof Array) {
-            this.tableData = res.data.data
+          if (res.data.status) {
+            const data = res.data.data
+            if (data instanceof Array) {
+              this.tableData = res.data.data
+            } else {
+              this.tableData = [data]
+            }
           } else {
-            this.tableData = [data]
+            this.tableData = []
           }
         })
         .catch((err) => {
@@ -246,9 +249,10 @@ export default {
     //   this.handleAvatarChange({ raw: files[0] }, this.fileList)
     // },
     tableRowClick(row, col) {
-      this.infoForm = row
-      this.dialogFormTitle = row.name
-      this.dialogFormVisible = true
+      // this.infoForm = row
+      // this.dialogFormTitle = row.name
+      // this.dialogFormVisible = true
+      this.$router.push('/tms/view?userId=' + row.id)
     }
   }
 }

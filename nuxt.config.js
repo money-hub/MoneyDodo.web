@@ -67,7 +67,7 @@ module.exports = {
   },
 
   proxy: [
-    // ['/api/auth', {
+    // ['/api/tasks', {
     //   target: 'http://172.18.32.216:8123'
     // }],
     // ['/api/certs', {
@@ -76,6 +76,9 @@ module.exports = {
     ['/api', {
       target: 'http://111.230.10.230:8998'
     }]
+    // ['/api', {
+    //   target: 'http://172.18.32.216:8123'
+    // }]
   ],
   /*
   ** Build configuration

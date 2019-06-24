@@ -13,7 +13,7 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <div class="logo header title" @click="this.$router.replace('/home')">
+        <div class="logo header title" @click="backHome">
           <i class="el-icon-s-home" />
           {{ isCollapse ? '' : 'MoneyDodo 管理员系统' }}
         </div>
@@ -32,11 +32,32 @@
           </el-menu-item-group>
         </el-submenu>
         <el-submenu
-          index="/tms"
+          index="/dms"
         >
           <template slot="title">
             <i class="el-icon-location" />
             <span>交易管理系统</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item
+              index="/dms/view"
+            >
+              查看
+            </el-menu-item>
+            <el-menu-item
+              index="/dms/check"
+              disabled
+            >
+              审核
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu
+          index="/tms"
+        >
+          <template slot="title">
+            <i class="el-icon-document" />
+            <span>任务系统</span>
           </template>
           <el-menu-item-group>
             <el-menu-item
@@ -142,6 +163,9 @@ export default {
     this.sysUserName = sessionStorage.getItem('username') || ''
   },
   methods: {
+    backHome() {
+      this.$router.push('/home')
+    },
     handleOpen(key, keyPath) {
       // console.log(key, keyPath)
     },

@@ -13,7 +13,7 @@ const createStore = () => {
       },
       setUser(state, user) {
         sessionStorage.setItem('username', user)
-        state.token = user
+        state.user = user
       },
       removeToken(state) {
         sessionStorage.removeItem('token')

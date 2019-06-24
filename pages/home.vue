@@ -18,7 +18,7 @@
         :key="o"
         class="text item"
       >
-        {{'列表内容 ' + o }}
+        {{ '列表内容 ' + o }}
       </div>
     </el-card>
   </div>
