@@ -71,7 +71,7 @@ module.exports = {
     //   target: 'http://172.18.32.216:8123'
     // }],
     // ['/api/certs', {
-    //   target: 'http://172.18.32.128:8123'
+    //   target: 'http://172.18.32.6:8123'
     // }],
     ['/api', {
       target: 'http://111.230.10.230:8998'

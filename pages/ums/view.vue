@@ -37,7 +37,6 @@
       @row-click="tableRowClick"
       @selection-change="handleSelectionChange"
     >
-      <!-- <el-table-column type="selection" /> -->
       <el-table-column
         prop="id"
         label="id"
@@ -174,7 +173,7 @@ export default {
       this.multipleSelection = val
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.certifiedPic == null) {
+      if (!row.certifiedPic) {
         return 'warning-row'
       } else if (row.certifiedPic != null) {
         return 'success-row'
@@ -205,49 +204,6 @@ export default {
           this.tableData = []
         })
     },
-    // beforeAvatarUpload(file) {
-    //   const isLt2M = file.size / 1024 / 1024 < 2
-
-    //   if (!isLt2M) {
-    //     this.$message.error('图片大小不能超过 2MB!')
-    //   }
-    //   return isLt2M
-    // },
-    // confirm() {
-    //   this.$refs.upload.submit()
-    // },
-    // uploadIcon(param) {
-    //   this.uploadDisabled = true
-    //   const postData = Object.assign({}, this.infoForm, { certifiedPic: this.avatar })
-    //   this.$axios.put('/users/' + postData.id, postData)
-    //     .then((res) => {
-    //       if (res.data.status) {
-    //         this.infoForm.certifiedPic = this.avatar
-    //         this.dialogFormVisible = false
-    //         this.avatar = null
-    //       } else {
-    //         this.$message.error(res.data.errinfo)
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       this.$message.error(err.message)
-    //       this.avatar = null
-    //     })
-    // },
-    // handleAvatarChange(file, fileList) {
-    //   this.uploadDisabled = true
-    //   const reader = new FileReader()
-    //   const that = this
-    //   reader.readAsDataURL(file.raw)
-    //   reader.onload = function (e) {
-    //     that.avatar = reader.result
-    //     that.uploadDisabled = false
-    //   }
-    // },
-    // replaceFile(files, fileList) {
-    //   this.fileList[0] = files[0]
-    //   this.handleAvatarChange({ raw: files[0] }, this.fileList)
-    // },
     tableRowClick(row, col) {
       // this.infoForm = row
       // this.dialogFormTitle = row.name
@@ -259,36 +215,13 @@ export default {
 </script>
 
 <style scoped>
-.el-table .warning-row {
-  background: oldlace;
-}
-.el-table .success-row {
-  background: #f0f9eb;
-}
 .el-image {
   height: 80px;
 }
-/* .avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+.warning-row {
+  background: rgb(253, 230, 230);
 }
-.avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+.success-row {
+  background: #f0f9eb;
 }
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-} */
 </style>

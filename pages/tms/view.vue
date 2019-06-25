@@ -174,7 +174,7 @@ export default {
   },
   asyncData({ $axios, params, route }) {
     const prefix = route.query.userId ? '/users/' + route.query.userId : ''
-    return $axios.get(prefix + '/tasks?limit=100').then((res) => {
+    return $axios.get(prefix + '/tasks').then((res) => {
       return {
         tableData: res.data.data,
         prefix: prefix
@@ -301,27 +301,4 @@ export default {
 .el-image {
   height: 80px;
 }
-/* .avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-} */
 </style>
