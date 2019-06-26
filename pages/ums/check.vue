@@ -160,12 +160,12 @@ export default {
       return ''
     },
     check(scope, isApproved) {
-      this.$axios
+      this.$axiosres.data.status
         .post('/certs/' + String(scope.row.id), {
           pass: isApproved
         })
         .then((res) => {
-          if (res.data.state) {
+          if (res.data.status) {
             const index = this.tableData.indexOf(scope.row)
             if (index > -1) {
               this.tableData.splice(index, 1)

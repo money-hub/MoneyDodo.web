@@ -19,7 +19,7 @@
           <el-button
             type="primary"
             :loading="quering"
-            @click="getTasks"
+            @click="getDeal"
           >
             查询
           </el-button>
@@ -73,6 +73,11 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="publisher"
+        label="发布者 "
+        align="center"
+      />
+      <el-table-column
         label="发布时间"
         align="center"
       >
@@ -83,25 +88,15 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="recipient"
-        label="接收者"
-        align="center"
-      />
-      <el-table-column
         prop="reward"
         label="reward"
         align="center"
       />
       <el-table-column
-        prop="publisher"
-        label="发布者 "
+        prop="recipient"
+        label="接收者"
         align="center"
       />
-      <!-- <el-table-column
-        prop="cutoff"
-        label="截止时间"
-        align="center"
-      /> -->
       <el-table-column
         label="截止时间"
         align="center"
@@ -110,19 +105,6 @@
           <span>
             {{ formatDate(scope.row.until, 'yyyy-MM-dd hh:mm:ss') }}
           </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="查看"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <el-button
-            type="success"
-            @click="view(scope.row)"
-          >
-            查看
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -189,7 +171,7 @@ export default {
     log(userId) {
       console.log(userId)
     },
-    getTasks() {
+    getDeal() {
       this.quering = true
       const name = !this.filters.name ? '' : ('/' + this.filters.name)
       this.$axios.get('/deals' + name)
@@ -214,16 +196,6 @@ export default {
           }
           this.tableData = []
         })
-    },
-    view(row) {
-      if (row.kind === 'questionnaire') {
-        this.$router.push('/tms/details?taskId=' + row.id)
-      } else {
-        this.$message({
-          type: 'error',
-          message: '暂时仅支持查看问卷'
-        })
-      }
     }
   }
 }

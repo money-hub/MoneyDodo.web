@@ -53,7 +53,7 @@
       :data="tableData"
       @expand-change="getTaskComment"
     >
-      <el-table-column type="expand" class-name="table-expanded">
+      <el-table-column type="expand" width="50px">
         <template slot-scope="scope">
           <el-card
             class="box-card"
@@ -74,7 +74,7 @@
                 type="danger"
                 size="small"
                 class="float-right"
-                @click="deleteComment(i)"
+                @click="deleteComment(i, scope.row)"
               >
                 删除
               </el-button>
@@ -131,11 +131,6 @@
         label="发布者 "
         align="center"
       />
-      <!-- <el-table-column
-        prop="cutoff"
-        label="截止时间"
-        align="center"
-      /> -->
       <el-table-column
         label="截止时间"
         align="center"
@@ -199,10 +194,10 @@ export default {
     })
   },
   methods: {
-    deleteComment(comment) {
+    deleteComment(comment, row) {
       this.$axios.delete('/tasks/' + comment.taskId + '/comments/' + comment.id).then((res) => {
         if (res.data.status) {
-          this.tableData.comments.splice(this.tableData.comments.indexOf(comment), 1)
+          row.comments.splice(row.comments.indexOf(comment), 1)
           this.$message({
             type: 'sucess',
             message: '删除成功'
@@ -320,5 +315,8 @@ export default {
 }
 .float-right {
   float: right;
+}
+.cell {
+  white-space: pre-wrap;
 }
 </style>

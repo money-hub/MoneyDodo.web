@@ -30,7 +30,7 @@
               查看
             </el-menu-item>
             <el-menu-item index="/ums/check">
-              审核
+              认证审核
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -81,13 +81,6 @@
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-menu-item
-          index="4"
-          disabled
-        >
-          <i class="el-icon-setting" />
-          <span slot="title">导航四</span>
-        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
@@ -182,12 +175,13 @@ export default {
         cancelButtonText: '取消'
       })
         .then(() => {
-          // this.$axios.get('/auth/logout').then((res) => {
-          // if (res.state) {
-          this.$store.commit('removeToken')
-          this.$router.replace('/')
-          // }
-          // })
+          this.$axios.get('/auth/logout').then((res) => {
+            console.log(res)
+            if (res.data.state) {
+              this.$store.commit('removeToken')
+              this.$router.replace('/')
+            }
+          })
         })
         .catch(() => { })
     },
