@@ -13,7 +13,10 @@
         @open="handleOpen"
         @close="handleClose"
       >
-        <div class="logo header title" @click="backHome">
+        <div
+          class="logo header title"
+          @click="backHome"
+        >
           <i class="el-icon-s-home" />
           {{ isCollapse ? '' : 'MoneyDodo 管理员系统' }}
         </div>
@@ -31,44 +34,49 @@
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-submenu
-          index="/dms"
-        >
+        <el-submenu index="/dms">
           <template slot="title">
             <i class="el-icon-location" />
             <span>交易管理系统</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item
-              index="/dms/view"
-            >
+            <el-menu-item index="/dms/view">
               查看
-            </el-menu-item>
-            <el-menu-item
-              index="/dms/check"
-              disabled
-            >
-              审核
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-        <el-submenu
-          index="/tms"
-        >
+        <el-submenu index="/tms">
           <template slot="title">
             <i class="el-icon-document" />
             <span>任务系统</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item
-              index="/tms/view"
-            >
+            <el-menu-item index="/tms/view">
               查看
             </el-menu-item>
-            <el-menu-item
-              index="/tms/check"
-              disabled
-            >
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="/cms">
+          <template slot="title">
+            <i class="el-icon-location" />
+            <span>充值系统</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/cms/view">
+              查看
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="/rms">
+          <template slot="title">
+            <i class="el-icon-location" />
+            <span>商家任务审核系统</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/rms/view">
+              查看
+            </el-menu-item>
+            <el-menu-item index="/rms/check">
               审核
             </el-menu-item>
           </el-menu-item-group>

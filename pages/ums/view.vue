@@ -34,7 +34,6 @@
       lazy
       :data="tableData"
       :row-class-name="tableRowClassName"
-      @row-click="tableRowClick"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -97,43 +96,20 @@
         label="信用分"
         align="center"
       />
-      <!-- <el-table-column label="操作" fixed="right" align="center" min-width="150px">
+      <el-table-column label="操作" fixed="right" align="center" min-width="150px">
         <template slot-scope="scope">
-          <el-button size="small" type="success" @click="check(scope.row.id, true)">
-            通过
+          <el-button size="small" type="success" @click="viewTasks(scope.row)">
+            查看任务
           </el-button>
-          <el-button size="small" type="danger" @click="check(scope.row.id, false)">
-            拒绝
+          <el-button size="small" type="success" @click="viewDeals(scope.row)">
+            查看交易
+          </el-button>
+          <el-button size="small" type="success" @click="viewChanges(scope.row)">
+            查看充值记录
           </el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
-    <!-- <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible">
-      <el-upload
-        ref="upload"
-        action="alert"
-        class="avatar-uploader"
-        :file-list="fileList"
-        :limit="1"
-        :auto-upload="false"
-        :show-file-list="false"
-        :before-upload="beforeAvatarUpload"
-        :on-change="handleAvatarChange"
-        :on-exceed="replaceFile"
-        :http-request="uploadIcon"
-      >
-        <img v-if="avatar" :src="avatar" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon" />
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="uploadDisabled" @click="confirm">
-          确 定
-        </el-button>
-        <el-button @click="dialogFormVisible = false">
-          取 消
-        </el-button>
-      </div>
-    </el-dialog> -->
   </div>
 </template>
 
@@ -204,11 +180,14 @@ export default {
           this.tableData = []
         })
     },
-    tableRowClick(row, col) {
-      // this.infoForm = row
-      // this.dialogFormTitle = row.name
-      // this.dialogFormVisible = true
+    viewTasks(row) {
       this.$router.push('/tms/view?userId=' + row.id)
+    },
+    viewDeals(row) {
+      this.$router.push('/dms/view?userId=' + row.id)
+    },
+    viewChanges(row) {
+      this.$router.push('/cms/view?userId=' + row.id)
     }
   }
 }

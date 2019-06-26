@@ -33,7 +33,6 @@
       stripe
       :data="tableData"
       :row-class-name="tableRowClassName"
-      @row-click="tableRowClick"
       @selection-change="handleSelectionChange"
     >
       <!-- <el-table-column type="selection" /> -->
@@ -121,14 +120,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- <div style="margin-top: 20px">
-      <el-button @click="toggleSelection([tableData[1], tableData[2]])">
-        切换第二、第三行的选中状态
-      </el-button>
-      <el-button @click="toggleSelection()">
-        取消选择
-      </el-button>
-    </div> -->
   </div>
 </template>
 
@@ -167,9 +158,6 @@ export default {
         return 'success-row'
       }
       return ''
-    },
-    tableRowClick(row, col) {
-      console.log(row)
     },
     check(scope, isApproved) {
       this.$axios

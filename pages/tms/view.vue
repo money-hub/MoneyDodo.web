@@ -19,7 +19,7 @@
           <el-button
             type="primary"
             :loading="quering"
-            @click="getUserTasks"
+            @click="getTasks"
           >
             查询
           </el-button>
@@ -53,24 +53,34 @@
       :data="tableData"
       @expand-change="getTaskComment"
     >
-      <el-table-column type="expand">
+      <el-table-column type="expand" class-name="table-expanded">
         <template slot-scope="scope">
-          <div
+          <el-card
+            class="box-card"
             v-for="i in scope.row.comments"
-            :key="i.id"
+            :key="scope.row.id + '-' + i.id"
             :loading="i.loadComment"
           >
-            <span>{{ i.userId }}</span>
-            <span>{{ i.timestamp }}</span>
-            <span>{{ i.stars }}</span>
-            <div>{{ i.content }}</div>
-            <el-button
-              type="danger"
-              @click="deleteComment(i)"
+            <div
+              slot="header"
+              class="clearfix"
             >
-              删除
-            </el-button>
-          </div>
+              <el-row>
+                <el-col :span="12"><span>{{ i.userId }}</span></el-col>
+                <el-col :span="12" class="float-right"><span class="float-right">{{ i.stars }} 赞</span></el-col>
+              </el-row>
+              <span>{{ formatDate(i.timestamp, 'yyyy-MM-dd hh:mm:ss') }}</span>
+              <el-button
+                type="danger"
+                size="small"
+                class="float-right"
+                @click="deleteComment(i)"
+              >
+                删除
+              </el-button>
+            </div>
+            <div>{{ i.content }}</div>
+          </el-card>
         </template>
       </el-table-column>
       <el-table-column
@@ -175,6 +185,13 @@ export default {
   asyncData({ $axios, params, route }) {
     const prefix = route.query.userId ? '/users/' + route.query.userId : ''
     return $axios.get(prefix + '/tasks').then((res) => {
+      if (res.data.data instanceof Array) {
+        res.data.data.forEach((i) => {
+          if (!i.comments) {
+            i.comments = []
+          }
+        })
+      }
       return {
         tableData: res.data.data,
         prefix: prefix
@@ -183,7 +200,7 @@ export default {
   },
   methods: {
     deleteComment(comment) {
-      this.$axios.delete('/tasks/' + comment.tasksId + '/comments/' + comment.id).then((res) => {
+      this.$axios.delete('/tasks/' + comment.taskId + '/comments/' + comment.id).then((res) => {
         if (res.data.status) {
           this.tableData.comments.splice(this.tableData.comments.indexOf(comment), 1)
           this.$message({
@@ -224,7 +241,6 @@ export default {
         row.expend = true
         row.loadComment = true
         this.$axios.get('/tasks/' + row.id + '/comments').then((res) => {
-          console.log(res.data)
           if (res.data.status) {
             row.comments = res.data.data
           } else {
@@ -252,10 +268,10 @@ export default {
     log(userId) {
       console.log(userId)
     },
-    getUserTasks() {
+    getTasks() {
       this.quering = true
       const name = !this.filters.name ? '' : ('/' + this.filters.name)
-      this.$axios.get(this.prefix + '/tasks' + name)
+      this.$axios.get('/tasks' + name)
         .then((res) => {
           this.quering = false
           if (res.data.status) {
@@ -265,6 +281,7 @@ export default {
             } else {
               this.tableData = [data]
             }
+            this.radio = null
           } else {
             this.tableData = []
           }
@@ -300,5 +317,8 @@ export default {
 }
 .el-image {
   height: 80px;
+}
+.float-right {
+  float: right;
 }
 </style>

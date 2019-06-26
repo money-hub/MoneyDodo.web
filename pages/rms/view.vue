@@ -33,11 +33,14 @@
       <el-radio :label="null">
         全部
       </el-radio>
-      <el-radio :label="'underway'">
-        正在进行中
+      <el-radio :label="'non-released'">
+        未发布的
       </el-radio>
-      <el-radio :label="'closure'">
-        已完成
+      <el-radio :label="'released'">
+        已发布的
+      </el-radio>
+      <el-radio :label="'closed'">
+        已关闭的
       </el-radio>
     </el-radio-group>
     <el-table
@@ -48,15 +51,36 @@
       stripe
       lazy
       :data="tableData"
+      @expand-change="getTaskComment"
     >
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <div
+            v-for="i in scope.row.comments"
+            :key="i.id"
+            :loading="i.loadComment"
+          >
+            <span>{{ i.userId }}</span>
+            <span>{{ i.timestamp }}</span>
+            <span>{{ i.stars }}</span>
+            <div>{{ i.content }}</div>
+            <el-button
+              type="danger"
+              @click="deleteComment(i)"
+            >
+              删除
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="id"
         label="id"
         align="center"
       />
       <el-table-column
-        prop="taskId"
-        label="任务id"
+        prop="kind"
+        label="种类"
         align="center"
       />
       <el-table-column
@@ -78,13 +102,13 @@
       >
         <template slot-scope="scope">
           <span>
-            {{ formatDate(scope.row.since, 'yyyy-MM-dd hh:mm:ss') }}
+            {{ formatDate(scope.row.pubdate, 'yyyy-MM-dd hh:mm:ss') }}
           </span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="recipient"
-        label="接收者"
+        prop="restrain"
+        label="限制"
         align="center"
       />
       <el-table-column
@@ -108,7 +132,7 @@
       >
         <template slot-scope="scope">
           <span>
-            {{ formatDate(scope.row.until, 'yyyy-MM-dd hh:mm:ss') }}
+            {{ formatDate(scope.row.cutoff, 'yyyy-MM-dd hh:mm:ss') }}
           </span>
         </template>
       </el-table-column>
@@ -142,22 +166,36 @@ export default {
       radio: null,
       tableLoading: false,
       buttonColorTable: {
-        'underway': 'success',
-        'closure': 'danger'
+        'non-released': 'info',
+        'released': 'success',
+        'closed': 'danger'
       }
     }
   },
-  asyncData({ $axios, params, route }) {
-    const prefix = route.query.userId ? '/users/' + route.query.userId : ''
-    return $axios.get(prefix + '/deals').then((res) => {
-      console.log(res.data)
+  asyncData({ $axios }) {
+    return $axios.get('/reviews').then((res) => {
       return {
-        tableData: res.data.data,
-        prefix: prefix
+        tableData: res.data.data
       }
     })
   },
   methods: {
+    deleteComment(comment) {
+      this.$axios.delete('/tasks/' + comment.tasksId + '/comments/' + comment.id).then((res) => {
+        if (res.data.status) {
+          this.tableData.comments.splice(this.tableData.comments.indexOf(comment), 1)
+          this.$message({
+            type: 'sucess',
+            message: '删除成功'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '删除失败'
+          })
+        }
+      })
+    },
     formatDate(str, fmt) {
       const d = new Date(str)
       const o = {
@@ -179,9 +217,32 @@ export default {
       }
       return fmt
     },
+    getTaskComment(row, expandedRows) {
+      if (!row.expend) {
+        row.expend = true
+        row.loadComment = true
+        this.$axios.get('/tasks/' + row.id + '/comments').then((res) => {
+          console.log(res.data)
+          if (res.data.status) {
+            row.comments = res.data.data
+          } else {
+            row.comments = []
+          }
+          row.loadComment = false
+        }).catch((err) => {
+          row.loadComment = false
+          if (err) {
+            console.log(err)
+          }
+          row.comments = []
+        })
+      } else {
+        row.expend = false
+      }
+    },
     radioChanged(newLabel) {
       this.tableLoading = true
-      this.$axios.get(this.prefix + '/deals' + (newLabel ? '?state=' + newLabel : '')).then((res) => {
+      this.$axios.get(this.prefix + '/tasks' + (newLabel ? '?state=' + newLabel : '')).then((res) => {
         this.tableData = res.data.data
         this.tableLoading = false
       })
@@ -192,7 +253,7 @@ export default {
     getTasks() {
       this.quering = true
       const name = !this.filters.name ? '' : ('/' + this.filters.name)
-      this.$axios.get('/deals' + name)
+      this.$axios.get('/tasks' + name)
         .then((res) => {
           this.quering = false
           if (res.data.status) {
