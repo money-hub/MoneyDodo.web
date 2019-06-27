@@ -1,48 +1,5 @@
 <template>
   <div class="match-parent">
-    <el-col
-      :span="24"
-      class="toolbar"
-      style="padding-bottom: 0px;"
-    >
-      <el-form
-        :inline="true"
-        :model="filters"
-      >
-        <el-form-item>
-          <el-input
-            v-model="filters.name"
-            placeholder="id"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :loading="quering"
-            @click="getTasks"
-          >
-            查询
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-col>
-    <el-radio-group
-      v-model="radio"
-      @change="radioChanged"
-    >
-      <el-radio :label="null">
-        全部
-      </el-radio>
-      <el-radio :label="'non-released'">
-        未发布的
-      </el-radio>
-      <el-radio :label="'released'">
-        已发布的
-      </el-radio>
-      <el-radio :label="'closed'">
-        已关闭的
-      </el-radio>
-    </el-radio-group>
     <el-table
       ref="multipleTable"
       v-loading.body.lock="tableLoading"
@@ -79,8 +36,8 @@
         align="center"
       />
       <el-table-column
-        prop="kind"
-        label="种类"
+        prop="taskId"
+        label="任务id"
         align="center"
       />
       <el-table-column
@@ -97,46 +54,11 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="发布时间"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span>
-            {{ formatDate(scope.row.pubdate, 'yyyy-MM-dd hh:mm:ss') }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="restrain"
-        label="限制"
-        align="center"
-      />
-      <el-table-column
-        prop="reward"
-        label="reward"
-        align="center"
-      />
-      <el-table-column
-        prop="publisher"
-        label="发布者 "
+        prop="userId"
+        label="发布者"
         align="center"
       />
       <!-- <el-table-column
-        prop="cutoff"
-        label="截止时间"
-        align="center"
-      /> -->
-      <el-table-column
-        label="截止时间"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span>
-            {{ formatDate(scope.row.cutoff, 'yyyy-MM-dd hh:mm:ss') }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
         label="查看"
         align="center"
       >
@@ -148,7 +70,7 @@
             查看
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
   </div>
 </template>

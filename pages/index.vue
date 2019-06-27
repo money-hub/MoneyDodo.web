@@ -93,7 +93,7 @@ export default {
                 if (this.$route.query.redirect) {
                   this.$router.replace(this.$route.query.redirect)
                 } else {
-                  this.$router.replace('/home')
+                  this.$router.replace('/ums/check')
                 }
               } else {
                 this.$message({

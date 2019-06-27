@@ -148,6 +148,7 @@
         <template slot-scope="scope">
           <el-button
             type="success"
+            :disabled="!scope.row.state || scope.row.state === 'non-released'"
             @click="view(scope.row)"
           >
             查看

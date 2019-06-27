@@ -76,9 +76,9 @@
             <el-menu-item index="/rms/view">
               查看
             </el-menu-item>
-            <el-menu-item index="/rms/check">
+            <!-- <el-menu-item index="/rms/check">
               审核
-            </el-menu-item>
+            </el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
