@@ -54,7 +54,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="name"
         label="发布者"
         align="center"
       />
@@ -96,6 +96,7 @@ export default {
   },
   asyncData({ $axios }) {
     return $axios.get('/reviews').then((res) => {
+      console.log(res.data.data)
       return {
         tableData: res.data.data
       }
